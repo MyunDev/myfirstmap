@@ -29,6 +29,11 @@
 
     var map = new naver.maps.Map('map', mapOptions);
 
+    //마커를 담을 공간 배열
+    var markerList = [];
+    //infowindow를 담을 공간 배열
+    var infowindowList = [];
+
     for (var i in data) {
       console.log(data)
       var target = data[i];
@@ -37,11 +42,53 @@
         map: map,
         position: latlng,
         icon: {
-          content: "<div class = 'marker'></div>"
+          content: "<div class = 'marker'></div>",
+
+          //마커의 중심좌표 정하기
+          anchor: new naver.maps.Point(12, 12)
         }
-      })
+      });
+
+      var content = `<div class = 'infowindow_wrap'>
+          <div class = 'infowindow_title'>${target.title}</div>
+          <div class = 'infowindow_contetn'>${target.content}</div>
+          <div class = 'infowindow_date'>${target.date}</div>
+        </div>`
+
+      var infowindow = new naver.maps.InfoWindow({
+        content: content,
+
+        //네이버 api에서 제공하는 infoWindow의 css들을 투명으로 만들어서 커스터마이징 할수 있게함
+        backgroundColor: "#00ff0000",
+        borderColor: "#00ff0000",
+        //꼬리표가 나오지 않도록 미리 설정
+        anchorSize: new naver.maps.Size(0, 0)
+      });
+
+      markerList.push(marker);
+      infowindowList.push(infowindow);
     }
 
+    for (var i = 0, ii = markerList.length; i < ii; i++) {
+      //네이버 맵에 이벤트 설정 markerList에 i번쨰에는 마커의 위치가 담김, 클릭했을 때  getClickHandler함수 실행
+      naver.maps.Event.addListener(markerList[i], "click", getClickHandler(i));
+    }
+
+    function getClickHandler(i) {
+      return function () {
+
+        //클릭을 하면 수많은 마커 가운데 하나가 markerList[i]가 되어 marker에 담긴다.
+        var marker = markerList[i];
+        var infowindow = infowindowList[i];
+        console.log(marker);
+        if (infowindow.getMap()) {
+          //infowindow가 표시중이면 클릭했을때 닫는다.
+          infowindow.close();
+        } else {
+          infowindow.open(map, marker);
+        }
+      }
+    }
 
     /* 맨처음 마커 하나 생성할때
     marker = new naver.maps.Marker({
