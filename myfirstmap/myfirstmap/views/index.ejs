@@ -19,6 +19,8 @@
   </div>
   <div id="map" style="width:100%;height:100vh;"></div>
 
+  <!--data.js파일을 연결해줌 data.js 안에 있는 data 변수를 사용할 수 있게 된다.-->
+  <script type="text/javascript" src="/data/data.js"></script>
   <script>
     var mapOptions = {
       center: new naver.maps.LatLng(37.3595704, 127.105399),
@@ -27,6 +29,21 @@
 
     var map = new naver.maps.Map('map', mapOptions);
 
+    for (var i in data) {
+      console.log(data)
+      var target = data[i];
+      var latlng = new naver.maps.LatLng(target.lat, target.lng);
+      marker = new naver.maps.Marker({
+        map: map,
+        position: latlng,
+        icon: {
+          content: "<div class = 'marker'></div>"
+        }
+      })
+    }
+
+
+    /* 맨처음 마커 하나 생성할때
     marker = new naver.maps.Marker({
       map: map,
       position: new naver.maps.LatLng(37.3595704, 127.105399),
@@ -34,6 +51,7 @@
         content: "<div class = 'marker'></div>"
       }
     })
+    */
   </script>
 </body>
 
